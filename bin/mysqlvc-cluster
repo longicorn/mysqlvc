@@ -39,6 +39,14 @@ cluster_create()
 		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my40.cnf -o $MYSQL_CONF > /dev/null 2>&1
 	fi
 
+	# set port
+	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/\.//g"`
+	sed -i -e "s/port.*$/port = $VERSION_STRING/g" $MYSQL_CONF
+
+	# set hostname
+	HOSTNAME=`hostname`
+	sed -i -e "s/<HOSTNAME>/$HOSTNAME/g" $MYSQL_CONF
+
 	#root's default password is 'password'
 	#"$MYSQLVC_BIN_ROOT/mysqladmin" -u root password "password"
 
@@ -54,8 +62,23 @@ cluster_delete()
 
 cluster_start()
 {
+	echo -n "MySQL start"
 	OPTION="--defaults-file=$MYSQL_CONF --basedir=$MYSQL_CURRENT_ROOT --datadir=$CLUSTER_DATA_PATH --log-error=$CLUSTER_DATA_PATH/mysqlvc.err"
 	"bin/mysqld_safe" $OPTION > /dev/null 2>&1 &
+
+	TIMEOUT=60
+	STEP=1
+	HOSTNAME=`hostname`
+	while [ ! -f "$CLUSTER_DATA_PATH/$HOSTNAME.pid" ]; do
+		STEP=$(($STEP + 1))
+		echo -n '.'
+		if [ $STEP -eq $TIMEOUT ]; then
+			echo "Timeout"
+			exit
+		fi
+		sleep 1
+	done
+	echo ""
 }
 
 cluster_stop()
