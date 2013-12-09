@@ -1,0 +1,50 @@
+#!/bin/sh
+
+COMMAND="$1"
+shift
+
+COMMAND_PATH=$(cd $(dirname $0);pwd)
+export MYSQLVC_ROOT=$(cd $(dirname "$COMMAND_PATH/../../");pwd)
+export MYSQLVC_BIN_ROOT="$MYSQLVC_ROOT/bin"
+export MYSQL_BUILD_ROOT="$MYSQLVC_ROOT/mysql-build"
+export MYSQL_ROOT="$MYSQLVC_ROOT/versions"
+export CLUSTER_ROOT="$MYSQLVC_ROOT/clusters"
+
+export MYSQL_VERSION_PATH="$MYSQLVC_ROOT/version"
+if [ -e $MYSQL_VERSION_PATH ]; then
+	export MYSQL_VERSION=`cat $MYSQL_VERSION_PATH`
+	export MYSQL_CURRENT_ROOT="$MYSQLVC_ROOT/versions/$MYSQL_VERSION"
+fi
+
+case $COMMAND in
+init)
+	sh $COMMAND_PATH/mysqlvc-init
+	;;
+cluster)
+	# not install
+	if [ $MYSQL_CURRENT_ROOT ]; then
+		sh $COMMAND_PATH/mysqlvc-cluster $*
+	else
+		echo 'Error:Not select version!'
+	fi
+	;;
+current)
+	echo $MYSQL_VERSION
+	;;
+install)
+	sh $COMMAND_PATH/mysqlvc-install $*
+	;;
+list)
+	ls $MYSQLVC_ROOT/versions| while read version; do
+		echo $version
+	done
+	;;
+use)
+	sh $COMMAND_PATH/mysqlvc-use $*
+	;;
+*)
+	echo "init"
+	echo "build"
+	echo "start"
+	echo "stop"
+esac

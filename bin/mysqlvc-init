@@ -1,0 +1,6 @@
+if [ ! -e $MYSQL_BUILD_ROOT ]; then
+	git clone https://github.com/kamipo/mysql-build.git $MYSQL_BUILD_ROOT > /dev/null 2>&1
+fi
+
+mkdir -p $MYSQL_ROOT
+mkdir -p $CLUSTER_ROOT
