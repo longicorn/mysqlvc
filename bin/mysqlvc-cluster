@@ -63,6 +63,12 @@ cluster_stop()
 	"bin/mysqladmin" --defaults-file=$MYSQL_CONF -u root shutdown
 }
 
+cluster_use()
+{
+	OPTION="--defaults-file=$MYSQL_CONF"
+	"bin/mysql" $OPTION
+}
+
 case $COMMAND in
 create)
 	cluster_create
@@ -80,5 +86,8 @@ start)
 	;;
 stop)
 	cluster_stop
+	;;
+use)
+	cluster_use
 	;;
 esac

@@ -37,6 +37,10 @@ MySQL cluster start
 
     $ mysqlvc cluster start master
 
+MySQL cluster use console
+
+    $ mysqlvc cluster use master
+
 MySQL cluster stop
 
     $ mysqlvc cluster stop master
