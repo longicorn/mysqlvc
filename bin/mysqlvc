@@ -16,6 +16,12 @@ if [ -e $MYSQL_VERSION_PATH ]; then
 	export MYSQL_CURRENT_ROOT="$MYSQLVC_ROOT/versions/$MYSQL_VERSION"
 fi
 
+mysqlvc_version()
+{
+	MYSQLVC_VERSION='0.0.1'
+	echo $MYSQLVC_VERSION
+}
+
 case $COMMAND in
 init)
 	sh $COMMAND_PATH/mysqlvc-init
@@ -41,6 +47,9 @@ list)
 	;;
 use)
 	sh $COMMAND_PATH/mysqlvc-use $*
+	;;
+version)
+	mysqlvc_version
 	;;
 *)
 	echo "init"

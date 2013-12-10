@@ -4,6 +4,8 @@ shift
 CLUSTER=$1
 CLUSTER_ROOT="$CLUSTER_ROOT/$MYSQL_VERSION/$CLUSTER"
 
+VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/\.//g"`
+
 cd $MYSQL_CURRENT_ROOT
 
 
@@ -29,8 +31,10 @@ cluster_create()
 		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my56.cnf -o $MYSQL_CONF > /dev/null 2>&1
 		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
 		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
-	elif [ `echo $MYSQL_VERSION|grep '5.7'` ]; then
+	elif [ `echo $MYSQL_VERSION|grep '5.5'` ]; then
 		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my55.cnf -o $MYSQL_CONF > /dev/null 2>&1
+		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
+		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
 	elif [ `echo $MYSQL_VERSION|grep '5.1'` ]; then
 		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my51.cnf -o $MYSQL_CONF > /dev/null 2>&1
 	elif [ `echo $MYSQL_VERSION|grep '4.'` ]; then
@@ -62,7 +66,7 @@ cluster_delete()
 
 cluster_start()
 {
-	echo -n "MySQL start"
+	/bin/echo -n "MySQL start"
 	OPTION="--defaults-file=$MYSQL_CONF --basedir=$MYSQL_CURRENT_ROOT --datadir=$CLUSTER_DATA_PATH --log-error=$CLUSTER_DATA_PATH/mysqlvc.err"
 	"bin/mysqld_safe" $OPTION > /dev/null 2>&1 &
 
@@ -71,7 +75,7 @@ cluster_start()
 	HOSTNAME=`hostname`
 	while [ ! -f "$CLUSTER_DATA_PATH/$HOSTNAME.pid" ]; do
 		STEP=$(($STEP + 1))
-		echo -n '.'
+		/bin/echo -n '.'
 		if [ $STEP -eq $TIMEOUT ]; then
 			echo "Timeout"
 			exit

@@ -6,7 +6,7 @@ mysqlvc is MySQL Version Controller.
 Installation
 ------------
     $ git clone git@github.com:longicorn/mysqlvc.git
-    $ export PATH=/path/to/mysqlvc:$PATH
+    $ export PATH=/path/to/mysqlvc/bin:$PATH
     $ mysqlvc init
 
 Commands
