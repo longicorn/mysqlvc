@@ -18,7 +18,7 @@ fi
 
 mysqlvc_version()
 {
-	MYSQLVC_VERSION='0.0.1'
+	MYSQLVC_VERSION='0.0.2'
 	echo $MYSQLVC_VERSION
 }
 
