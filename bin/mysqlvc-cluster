@@ -2,8 +2,8 @@ COMMAND="$1"
 shift
 
 CLUSTER=$1
-CLUSTER_ROOT="$CLUSTER_ROOT/$MYSQL_VERSION/$CLUSTER"
-
+CLUSTER_VERSION_ROOT="$CLUSTER_ROOT/$MYSQL_VERSION"
+CLUSTER_CURRENT_ROOT="$CLUSTER_VERSION_ROOT/$CLUSTER"
 VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/\.//g"`
 
 cd $MYSQL_CURRENT_ROOT
@@ -14,14 +14,18 @@ if [ ! -e $DB_INSTALL ]; then
 	DB_INSTALL="bin/mysql_install_db"
 fi
 
-CLUSTER_DATA_PATH="$CLUSTER_ROOT/data"
-MYSQL_CONF="$CLUSTER_ROOT/my.cnf"
+CLUSTER_DATA_PATH="$CLUSTER_CURRENT_ROOT/data"
+MYSQL_CONF="$CLUSTER_CURRENT_ROOT/my.cnf"
 
 cluster_create()
 {
-	mkdir -p $CLUSTER_ROOT
+	mkdir -p $CLUSTER_CURRENT_ROOT
 	mkdir -p $CLUSTER_DATA_PATH
 	$DB_INSTALL --basedir=$MYSQL_CURRENT_ROOT --datadir=$CLUSTER_DATA_PATH --ldata=$CLUSTER_DATA_PATH --no-defaults > /dev/null 2>&1
+	if [ $? != 0 ]; then
+		echo "Error:make database."
+		exit 1
+	fi
 
 	# setting my.cnf
 	#cp "$MYSQL_CURRENT_ROOT/support-files/my-medium.cnf" $MYSQL_CONF
@@ -37,6 +41,8 @@ cluster_create()
 		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
 	elif [ `echo $MYSQL_VERSION|grep '5.1'` ]; then
 		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my51.cnf -o $MYSQL_CONF > /dev/null 2>&1
+		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
+		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
 	elif [ `echo $MYSQL_VERSION|grep '4.'` ]; then
 		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my40.cnf -o $MYSQL_CONF > /dev/null 2>&1
 	elif [ `echo $MYSQL_VERSION|grep '3.'` ]; then
@@ -44,8 +50,14 @@ cluster_create()
 	fi
 
 	# set port
-	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/\.//g"`
-	sed -i -e "s/port.*$/port = $VERSION_STRING/g" $MYSQL_CONF
+	PORT_FILE="$CLUSTER_VERSION_ROOT/.port"
+	PORT_NUM=$VERSION_STRING
+	if [ -e $PORT_FILE ]; then
+		PORT_NUM=`cat $PORT_FILE`
+	fi
+	PORT_NUM=`echo "$PORT_NUM+1"|bc`
+	sed -i -e "s/port.*$/port = $PORT_NUM/g" $MYSQL_CONF
+	echo $PORT_NUM > $PORT_FILE
 
 	# set hostname
 	HOSTNAME=`hostname`
@@ -55,13 +67,15 @@ cluster_create()
 	#"$MYSQLVC_BIN_ROOT/mysqladmin" -u root password "password"
 
 	echo "MySQL base directory is $MYSQL_CURRENT_ROOT."
-	echo "Setting File is $MYSQL_CONF."
+	echo "my.cnf is $MYSQL_CONF."
 }
 
 cluster_delete()
 {
-	#echo $CLUSTER_ROOT
-	rm -rf $CLUSTER_ROOT
+	rm -rf $CLUSTER_CURRENT_ROOT
+	if [ 0 -eq `ls $CLUSTER_VERSION_ROOT|wc -l` ]; then
+		rm -rf $CLUSTER_VERSION_ROOT
+	fi
 }
 
 cluster_start()
@@ -92,7 +106,7 @@ cluster_stop()
 
 cluster_use()
 {
-	OPTION="--defaults-file=$MYSQL_CONF"
+	OPTION="--defaults-file=$MYSQL_CONF -u root"
 	"bin/mysql" $OPTION
 }
 
@@ -104,7 +118,7 @@ delete)
 	cluster_delete
 	;;
 list)
-	ls "$CLUSTER_ROOT"| while read version; do
+	ls "$CLUSTER_VERSION_ROOT"| while read version; do
 		echo $version
 	done
 	;;
@@ -116,5 +130,8 @@ stop)
 	;;
 use)
 	cluster_use
+	;;
+*)
+	echo "args error"
 	;;
 esac
