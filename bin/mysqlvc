@@ -18,8 +18,18 @@ fi
 
 mysqlvc_version()
 {
-	MYSQLVC_VERSION='0.0.2'
+	MYSQLVC_VERSION='0.1.0'
 	echo $MYSQLVC_VERSION
+}
+
+print_help()
+{
+	echo "Usage: mysqlvc action option..."
+	echo "init       First type, please"
+	echo "install    Installs a specific MySQL version"
+	echo "list       List all installed MySQL versions"
+	echo "cluster    Manipulate clusters (MySQL's data directories)"
+	echo "help       Print this help"
 }
 
 case $COMMAND in
@@ -27,7 +37,6 @@ init)
 	sh $COMMAND_PATH/mysqlvc-init
 	;;
 cluster)
-	# not install
 	if [ $MYSQL_CURRENT_ROOT ]; then
 		sh $COMMAND_PATH/mysqlvc-cluster $*
 	else
@@ -45,15 +54,12 @@ list)
 		echo $version
 	done
 	;;
-use)
-	sh $COMMAND_PATH/mysqlvc-use $*
-	;;
 version)
 	mysqlvc_version
 	;;
+help)
+	print_help
+	;;
 *)
-	echo "init"
-	echo "build"
-	echo "start"
-	echo "stop"
+	print_help
 esac
