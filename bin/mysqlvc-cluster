@@ -28,7 +28,6 @@ cluster_create()
 	fi
 
 	# setting my.cnf
-	#cp "$MYSQL_CURRENT_ROOT/support-files/my-medium.cnf" $MYSQL_CONF
 	if [ $VERSION_STRING -gt 5700 ]; then
 		echo 'after...'
 	elif [ $VERSION_STRING -gt 5600 ]; then
@@ -101,7 +100,7 @@ cluster_start()
 
 cluster_stop()
 {
-	"bin/mysqladmin" --defaults-file=$MYSQL_CONF -u root shutdown
+	mysqladmin --defaults-file=$MYSQL_CONF -u root shutdown
 }
 
 cluster_use()

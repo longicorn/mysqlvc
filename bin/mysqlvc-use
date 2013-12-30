@@ -1,0 +1,34 @@
+MYSQL_VERSION=${1:?}
+
+echo $MYSQL_VERSION > "$MYSQLVC_ROOT/version"
+
+export_curret_root_path()
+{
+	VERSION=$1
+	export MYSQL_CURRENT_ROOT="$MYSQLVC_ROOT/versions/$VERSION"
+}
+
+env_init()
+{
+	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/\.//g"`
+	export_curret_root_path $MYSQL_VERSION
+
+	LIBEXEC_ROOT=$MYSQLVC_ROOT/libexec
+	LIB_ROOT=$MYSQLVC_ROOT/lib
+
+	rm -f $LIBEXEC_ROOT
+	rm -f $LIB_ROOT
+
+	ln -s $MYSQL_CURRENT_ROOT/bin $LIBEXEC_ROOT
+	if [ $VERSION_STRING -gt 5700 ]; then
+		ln -s $MYSQL_CURRENT_ROOT/lib $LIB_ROOT
+	elif [ $VERSION_STRING -gt 5600 ]; then
+		ln -s $MYSQL_CURRENT_ROOT/lib $LIB_ROOT
+	elif [ $VERSION_STRING -gt 5500 ]; then
+		ln -s $MYSQL_CURRENT_ROOT/lib $LIB_ROOT
+	elif [ $VERSION_STRING -gt 5100 ]; then
+		ln -s $MYSQL_CURRENT_ROOT/lib/mysql $LIB_ROOT
+	fi
+}
+
+env_init

@@ -2,47 +2,12 @@ MYSQL_BUILD_COMMAND="$MYSQL_BUILD_ROOT/bin/mysql-build"
 
 OPTION=${1:?}
 
-cluster_create_env()
-{
-	MYSQL_VERSION=$1
-	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/\.//g"`
-	MYSQL_CURRENT_ROOT="$MYSQLVC_ROOT/versions/$MYSQL_VERSION"
-
-	echo "echo $MYSQL_VERSION > $MYSQLVC_ROOT/version" > $MYSQL_CURRENT_ROOT/env
-
-	if [ `uname` = "Darwin" ]; then
-		LIB_PATH="DYLD_LIBRARY_PATH"
-	elif [ `uname` = "Linux" ]; then
-		LIB_PATH="LD_LIBRARY_PATH"
-	fi
-
-	if [ $VERSION_STRING -gt 5700 ]; then
-		echo "export $LIB_PATH"="$MYSQL_CURRENT_ROOT/lib" >> $MYSQL_CURRENT_ROOT/env
-	elif [ $VERSION_STRING -gt 5600 ]; then
-		echo "export $LIB_PATH"="$MYSQL_CURRENT_ROOT/lib" >> $MYSQL_CURRENT_ROOT/env
-	elif [ $VERSION_STRING -gt 5500 ]; then
-		echo "export $LIB_PATH"="$MYSQL_CURRENT_ROOT/lib" >> $MYSQL_CURRENT_ROOT/env
-	elif [ $VERSION_STRING -gt 5100 ]; then
-		echo "export $LIB_PATH"="$MYSQL_CURRENT_ROOT/lib/mysql" >> $MYSQL_CURRENT_ROOT/env
-	fi
-
-	echo "rm -f $MYSQLVC_ROOT/libexec/*" >> $MYSQL_CURRENT_ROOT/env
-	echo "ln -s $MYSQL_CURRENT_ROOT/bin/* $MYSQLVC_ROOT/libexec/" >> $MYSQL_CURRENT_ROOT/env
-
-	echo "type this command when you use, please"
-	echo "source $MYSQL_CURRENT_ROOT/env"
-}
-
 
 case $OPTION in
 list)
 	$MYSQL_BUILD_COMMAND --definitions
 	;;
-test)
-	cluster_create_env $2
-	;;
 *)
 	$MYSQL_BUILD_COMMAND $OPTION "$MYSQL_ROOT/$OPTION"
-	cluster_create_env $OPTION
 	;;
 esac

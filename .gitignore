@@ -1,5 +1,6 @@
 clusters/*
-libexec/*
+lib
+libexec
 mysql-build/*
 version
 versions/*

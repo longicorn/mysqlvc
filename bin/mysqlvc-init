@@ -4,4 +4,3 @@ fi
 
 mkdir -p $MYSQL_ROOT
 mkdir -p $CLUSTER_ROOT
-mkdir -p $MYSQLVC_ROOT/libexec

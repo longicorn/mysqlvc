@@ -5,9 +5,20 @@ mysqlvc is MySQL Version Controller.
 
 Installation
 ------------
+    # git clone
     $ git clone git@github.com:longicorn/mysqlvc.git /path/to/mysqlvc/
+
+    # set PATH
     $ export PATH=/path/to/mysqlvc/bin:$PATH
     $ export PATH=/path/to/mysqlvc/libexec:$PATH
+
+    # set library path on Linux
+    $ export LD_LIBRARY_PATH=$HOME/.mysqlvc/lib:$LD_LIBRARY_PATH
+    # set library path on Mac
+    $ export DYLD_LIBRARY_PATH=$HOME/.mysqlvc/lib:$DYLD_LIBRARY_PATH
+    or
+    $ export DYLD_FALLBACK_LIBRARY_PATH=$HOME/.mysqlvc/lib:$DYLD_FALLBACK_LIBRARY_PATH
+
     $ mysqlvc init
 
 Commands
@@ -22,7 +33,7 @@ Install MySQL
 
 Set global version
 
-    $ source /path/to/mysqlvc/versions/VERSION/env
+    $ mysqlvc use 5.6.14
 
 Check current MySQL version
 
