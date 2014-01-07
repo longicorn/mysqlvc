@@ -135,6 +135,10 @@ start)
 stop)
 	cluster_stop
 	;;
+restart)
+	cluster_stop
+	cluster_start
+	;;
 use)
 	cluster_use $*
 	;;
