@@ -106,7 +106,8 @@ cluster_stop()
 cluster_use()
 {
 	OPTION="--defaults-file=$MYSQL_CONF -u root"
-	"bin/mysql" $OPTION
+	shift
+	"bin/mysql" $OPTION $*
 }
 
 case $COMMAND in
@@ -117,8 +118,15 @@ delete)
 	cluster_delete
 	;;
 list)
-	ls "$CLUSTER_VERSION_ROOT"| while read version; do
-		echo $version
+	echo "MySQL version:$MYSQL_VERSION"
+	echo "  cluster	status"
+	ls "$CLUSTER_VERSION_ROOT"| while read name; do
+		c=`ps aux|grep '[m]ysqld_safe'|grep $MYSQL_VERSION|grep $name|wc -l`
+		if [ $c = 0 ]; then
+			echo "  $name	stop"
+		else
+			echo "  $name	running"
+		fi
 	done
 	;;
 start)
@@ -128,7 +136,7 @@ stop)
 	cluster_stop
 	;;
 use)
-	cluster_use
+	cluster_use $*
 	;;
 *)
 	echo "args error"
