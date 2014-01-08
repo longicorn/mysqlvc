@@ -56,6 +56,12 @@ list)
 		echo $version
 	done
 	;;
+update)
+	cd $MYSQLVC_ROOT
+	git pull origin master
+	cd $MYSQLVC_ROOT/mysql-build
+	git pull origin master
+	;;
 use)
 	sh $COMMAND_PATH/mysqlvc-use $*
 	;;
