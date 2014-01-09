@@ -4,7 +4,7 @@ shift
 CLUSTER=$1
 CLUSTER_VERSION_ROOT="$CLUSTER_ROOT/$MYSQL_VERSION"
 CLUSTER_CURRENT_ROOT="$CLUSTER_VERSION_ROOT/$CLUSTER"
-VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/\.//g"`
+VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"`
 
 cd $MYSQL_CURRENT_ROOT
 
@@ -91,7 +91,7 @@ cluster_start()
 		/bin/echo -n '.'
 		if [ $STEP -eq $TIMEOUT ]; then
 			echo "Timeout"
-			exit
+			exit 1
 		fi
 		sleep 1
 	done

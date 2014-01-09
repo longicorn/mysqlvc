@@ -10,7 +10,7 @@ export_curret_root_path()
 
 env_init()
 {
-	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/\.//g"`
+	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"`
 	export_curret_root_path $MYSQL_VERSION
 
 	LIBEXEC_ROOT=$MYSQLVC_ROOT/libexec
