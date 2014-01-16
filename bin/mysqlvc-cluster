@@ -52,12 +52,11 @@ cluster_create()
 
 	# set port
 	PORT_FILE="$CLUSTER_VERSION_ROOT/.port"
-	#PORT_NUM=$VERSION_STRING
 	PORT_NUM=$PORT_VERSION_STRING
 	if [ -e $PORT_FILE ]; then
 		PORT_NUM=`cat $PORT_FILE`
+		PORT_NUM=`echo "$PORT_NUM+1"|bc`
 	fi
-	PORT_NUM=`echo "$PORT_NUM+1"|bc`
 	sed -i -e "s/port.*$/port = $PORT_NUM/g" $MYSQL_CONF
 	echo $PORT_NUM > $PORT_FILE
 
