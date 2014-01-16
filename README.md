@@ -37,7 +37,7 @@ Set global version
 
 Check current MySQL version
 
-    $ mysqlvc current
+    $ mysqlvc use
 
         5.6.14
 
