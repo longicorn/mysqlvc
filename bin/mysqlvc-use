@@ -1,6 +1,3 @@
-MYSQL_VERSION=${1:?}
-
-echo $MYSQL_VERSION > "$MYSQLVC_ROOT/version"
 
 export_curret_root_path()
 {
@@ -10,7 +7,10 @@ export_curret_root_path()
 
 env_init()
 {
-	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"`
+	MYSQL_VERSION=${1:?}
+	echo $MYSQL_VERSION > "$MYSQLVC_ROOT/version"
+
+	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"|head -c 4`
 	export_curret_root_path $MYSQL_VERSION
 
 	LIBEXEC_ROOT=$MYSQLVC_ROOT/libexec
@@ -31,4 +31,11 @@ env_init()
 	fi
 }
 
-env_init
+case $# in
+1)
+	env_init $*
+	;;
+*)
+	echo $MYSQL_VERSION
+	;;
+esac

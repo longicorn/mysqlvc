@@ -16,12 +16,6 @@ if [ -e $MYSQL_VERSION_PATH ]; then
 	export MYSQL_CURRENT_ROOT="$MYSQLVC_ROOT/versions/$MYSQL_VERSION"
 fi
 
-mysqlvc_version()
-{
-	MYSQLVC_VERSION='0.1.1'
-	echo $MYSQLVC_VERSION
-}
-
 print_help()
 {
 	echo "Usage: mysqlvc action option..."
@@ -30,8 +24,8 @@ print_help()
 	echo "help       Print this help."
 	echo "install    Installs a specific MySQL version."
 	echo "list       List all installed MySQL versions."
+	echo "update     Update mysqlvc and mysql-build."
 	echo "use        Set current MySQL version."
-	echo "version    Print mysqlvc's version."
 }
 
 case $COMMAND in
@@ -44,9 +38,6 @@ cluster)
 	else
 		echo 'Error:Not select version!'
 	fi
-	;;
-current)
-	echo $MYSQL_VERSION
 	;;
 install)
 	sh $COMMAND_PATH/mysqlvc-install $*
@@ -64,9 +55,6 @@ update)
 	;;
 use)
 	sh $COMMAND_PATH/mysqlvc-use $*
-	;;
-version)
-	mysqlvc_version
 	;;
 help)
 	print_help
