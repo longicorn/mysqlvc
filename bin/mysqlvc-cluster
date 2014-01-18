@@ -137,7 +137,7 @@ cluster_stop()
 
 cluster_use()
 {
-	if [ $# -eq 0 ]; then
+	if [ -e $CLUSTER ]; then
 		echo 'Error:Cluster name is empty.'
 		return 1
 	fi
