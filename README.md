@@ -58,7 +58,13 @@ MySQL cluster stop
     $ mysqlvc cluster stop master
 
 MySQL cluster delete
+
     $ mysqlvc cluster delete master
+
+MySQL admin
+
+    $ mysqlvc cluster admin master processlist
+    $ mysqlvc cluster admin master status
 
 Settings
 ------------
