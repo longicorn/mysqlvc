@@ -137,6 +137,10 @@ cluster_stop()
 
 cluster_use()
 {
+	if [ $# -eq 0 ]; then
+		echo 'Error:Cluster name is empty.'
+		return 1
+	fi
 	OPTION="--defaults-file=$MYSQL_CONF -u root"
 	"bin/mysql" $OPTION $*
 }
