@@ -2,6 +2,7 @@ mysqlvc -- MySQL Version Controller
 =====================
 
 mysqlvc is MySQL Version Controller.
+mysqlvc was inspired by pgvm
 
 Installation
 ------------
@@ -65,6 +66,11 @@ MySQL admin
 
     $ mysqlvc cluster admin master processlist
     $ mysqlvc cluster admin master status
+
+MySQL dump
+
+    $ mysqlvc cluster dump master -d database_name
+
 
 Settings
 ------------

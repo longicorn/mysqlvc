@@ -87,6 +87,18 @@ cluster_create()
 	echo "my.cnf is $MYSQL_CONF."
 }
 
+cluster_dump()
+{
+	cluster_ping $CLUSTER
+	if [ $? -eq 0 ]; then
+		echo 'MySQL is not running'
+		return 1
+	fi
+
+	mysqldump --defaults-file=$MYSQL_CONF -u root $*
+	return $?
+}
+
 cluster_delete()
 {
 	cluster_ping $CLUSTER
@@ -168,6 +180,9 @@ create)
 	;;
 delete)
 	cluster_delete
+	;;
+dump)
+	cluster_dump $*
 	;;
 list)
 	echo "MySQL version:$MYSQL_VERSION"
