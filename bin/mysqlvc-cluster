@@ -121,6 +121,10 @@ cluster_start()
 		echo 'MySQL is running'
 		return 1
 	fi
+	if [ ! -d $CLUSTER_VERSION_ROOT ]; then
+		echo "Cluster($CLUSTER) is not found"
+		return 1
+	fi
 
 	/bin/echo -n "MySQL start"
 	OPTION="--defaults-file=$MYSQL_CONF --basedir=$MYSQL_CURRENT_ROOT --datadir=$CLUSTER_DATA_PATH --log-error=$CLUSTER_DATA_PATH/mysqlvc.err"
@@ -186,15 +190,19 @@ dump)
 	;;
 list)
 	echo "MySQL version:$MYSQL_VERSION"
-	echo "  cluster	status"
-	ls "$CLUSTER_VERSION_ROOT"| while read name; do
-		cluster_ping $name
-		if [ $c = 0 ]; then
-			echo "  $name	stop"
-		else
-			echo "  $name	running"
-		fi
-	done
+	if [ -d $CLUSTER_VERSION_ROOT ]; then
+		echo "  cluster	status"
+		ls "$CLUSTER_VERSION_ROOT"| while read name; do
+			cluster_ping $name
+			if [ $c = 0 ]; then
+				echo "  $name	stop"
+			else
+				echo "  $name	running"
+			fi
+		done
+	else
+		echo "cluster is not found"
+	fi
 	;;
 start)
 	cluster_start
