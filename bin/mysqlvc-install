@@ -1,9 +1,27 @@
 MYSQL_BUILD_COMMAND="$MYSQL_BUILD_ROOT/bin/mysql-build"
 
 OPTION=${1:?}
+shift
 
+install_file()
+{
+	MYSQL_FILE=$1
+	PWD_PATH=`pwd`
+
+	PWD_FULL_PATH="$PWD_PATH/$MYSQL_FILE"
+	cd $MYSQL_ROOT
+
+	tar xvfz $PWD_FULL_PATH > /dev/null 2>&1
+
+	PWD_PATH=`pwd`
+	TO_NAME=`echo $MYSQL_FILE|sed -e "s/[^0-9\.-]//g"|sed -e "s/^-//"|sed -e "s/-.*//g"`
+	mv `echo $PWD_PATH/$MYSQL_FILE| sed -e "s/\.tar\.gz//g"` $PWD_PATH/$TO_NAME
+}
 
 case $OPTION in
+file)
+	install_file $*
+	;;
 list)
 	$MYSQL_BUILD_COMMAND --definitions
 	;;
