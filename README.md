@@ -32,6 +32,10 @@ Install MySQL
 
     $ mysqlvc install 5.6.14
 
+Install MySQL from tar.gz
+
+    $ mysqlvc install file mysql-5.6.16-osx10.7-x86_64.tar.gz
+
 Set global version
 
     $ mysqlvc use 5.6.14
