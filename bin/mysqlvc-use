@@ -1,9 +1,13 @@
+VERSION=$1
 
-export_curret_root_path()
-{
-	VERSION=$1
-	export MYSQL_CURRENT_ROOT="$MYSQLVC_ROOT/versions/$VERSION"
-}
+# check installed $VERSION
+if [ -n "$VERSION" ]; then
+	MYSQL_CURRENT_ROOT="$MYSQLVC_ROOT/versions/$VERSION"
+	if [ ! -d $MYSQL_CURRENT_ROOT ]; then
+		echo 'Version is not installed'
+		exit 1
+	fi
+fi
 
 env_init()
 {
@@ -11,7 +15,6 @@ env_init()
 	echo $MYSQL_VERSION > "$MYSQLVC_ROOT/version"
 
 	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"|head -c 4`
-	export_curret_root_path $MYSQL_VERSION
 
 	LIBEXEC_ROOT=$MYSQLVC_ROOT/libexec
 	LIB_ROOT=$MYSQLVC_ROOT/lib
