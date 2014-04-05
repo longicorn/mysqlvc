@@ -23,11 +23,7 @@ env_init()
 	rm -f $LIB_ROOT
 
 	ln -s $MYSQL_CURRENT_ROOT/bin $LIBEXEC_ROOT
-	if [ $VERSION_STRING -gt 5700 ]; then
-		ln -s $MYSQL_CURRENT_ROOT/lib $LIB_ROOT
-	elif [ $VERSION_STRING -gt 5600 ]; then
-		ln -s $MYSQL_CURRENT_ROOT/lib $LIB_ROOT
-	elif [ $VERSION_STRING -gt 5500 ]; then
+	if [ $VERSION_STRING -gt 5500 ]; then
 		ln -s $MYSQL_CURRENT_ROOT/lib $LIB_ROOT
 	elif [ $VERSION_STRING -gt 5100 ]; then
 		ln -s $MYSQL_CURRENT_ROOT/lib/mysql $LIB_ROOT

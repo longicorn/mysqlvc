@@ -6,7 +6,6 @@ if [ $# -gt 0 ]; then
 	CLUSTER=$1
 	shift
 	CLUSTER_CURRENT_ROOT="$CLUSTER_VERSION_ROOT/$CLUSTER"
-	#VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"`
 	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"|head -c 4`
 	PORT_VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"|head -c 5`
 fi
@@ -45,25 +44,22 @@ cluster_create()
 		exit 1
 	fi
 
-	# setting my.cnf
+	# get my.cnf
+	GLOBAL_VERSION=`echo $VERSION_STRING|cut -c 1-2`
+	CONF_URL=https://raw.github.com/kazeburo/mysetup/master/mysql/my$GLOBAL_VERSION.cnf
 	if [ $VERSION_STRING -gt 5700 ]; then
-		echo 'after...'
-	elif [ $VERSION_STRING -gt 5600 ]; then
-		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my56.cnf -o $MYSQL_CONF > /dev/null 2>&1
+		CONF_URL=https://raw.github.com/kazeburo/mysetup/master/mysql/my56.cnf
+		curl $CONF_URL -o $MYSQL_CONF > /dev/null 2>&1
 		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
 		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
-	elif [ $VERSION_STRING -gt 5500 ]; then
-		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my55.cnf -o $MYSQL_CONF > /dev/null 2>&1
+		sed -i -e "s/key_buffer/key_buffer_size/g" $MYSQL_CONF
+		sed -i -e "s/thread_cache/thread_cache_size/g" $MYSQL_CONF
+	elif [ $VERSION_STRING -gt 5100 ]; then #5100-5600
+		curl $CONF_URL -o $MYSQL_CONF > /dev/null 2>&1
 		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
 		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
-	elif [ $VERSION_STRING -gt 5100 ]; then
-		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my51.cnf -o $MYSQL_CONF > /dev/null 2>&1
-		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
-		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
-	elif [ $VERSION_STRING -gt 4000 ]; then
-		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my40.cnf -o $MYSQL_CONF > /dev/null 2>&1
-	elif [ $VERSION_STRING -gt 3000 ]; then
-		curl https://raw.github.com/kazeburo/mysetup/master/mysql/my40.cnf -o $MYSQL_CONF > /dev/null 2>&1
+	else #under 4000
+		curl $CONF_URL -o $MYSQL_CONF > /dev/null 2>&1
 	fi
 
 	# set port
