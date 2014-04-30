@@ -46,9 +46,10 @@ cluster_create()
 
 	# get my.cnf
 	GLOBAL_VERSION=`echo $VERSION_STRING|cut -c 1-2`
-	CONF_URL=https://raw.github.com/kazeburo/mysetup/master/mysql/my$GLOBAL_VERSION.cnf
+	CONF_URL=https://raw.githubusercontent.com/kazeburo/mysetup/master/mysql/my$GLOBAL_VERSION.cnf
 	if [ $VERSION_STRING -gt 5700 ]; then
-		CONF_URL=https://raw.github.com/kazeburo/mysetup/master/mysql/my56.cnf
+		echo "bbbb"
+		CONF_URL=https://raw.githubusercontent.com/kazeburo/mysetup/master/mysql/my56.cnf
 		curl $CONF_URL -o $MYSQL_CONF > /dev/null 2>&1
 		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
 		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
