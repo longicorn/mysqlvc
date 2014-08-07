@@ -172,6 +172,21 @@ cluster_ping()
 	fi
 }
 
+print_help()
+{
+	echo "Usage: mysqlvc cluster option... [cluster]"
+	echo "admin cluster                admin command"
+	echo "create cluster               create cluster"
+	echo "delete cluster               delete cluster"
+	echo "dump [mysqldump option]      dump command"
+	echo "list cluster                 print created clusters and state"
+	echo "start cluster                start cluster"
+	echo "stop cluster                 stop cluster"
+	echo "restart cluster              restart cluster"
+	echo "use cluster                  mysql repl"
+	echo "help                         Print this help."
+}
+
 case $COMMAND in
 admin)
 	cluster_admin $*
@@ -215,6 +230,7 @@ use)
 	cluster_use $*
 	;;
 *)
-	echo "args error"
+	#echo "args error"
+	print_help
 	;;
 esac
