@@ -14,11 +14,6 @@ fi
 cd $MYSQL_CURRENT_ROOT
 
 
-DB_INSTALL="scripts/mysql_install_db"
-if [ ! -e $DB_INSTALL ]; then
-	DB_INSTALL="bin/mysql_install_db"
-fi
-
 CLUSTER_DATA_PATH="$CLUSTER_CURRENT_ROOT/data"
 MYSQL_CONF="$CLUSTER_CURRENT_ROOT/my.cnf"
 
@@ -36,31 +31,36 @@ cluster_admin()
 
 cluster_create()
 {
+	# get install command
+	if [ $VERSION_STRING -lt 5706 ]; then
+		DB_INSTALL="scripts/mysql_install_db"
+		if [ ! -e $DB_INSTALL ]; then
+			DB_INSTALL="bin/mysql_install_db --no-defaults"
+		fi
+	else
+		DB_INSTALL="bin/mysqld --no-defaults --initialize-insecure"
+	fi
+
 	mkdir -p $CLUSTER_CURRENT_ROOT
 	mkdir -p $CLUSTER_DATA_PATH
-	$DB_INSTALL --basedir=$MYSQL_CURRENT_ROOT --datadir=$CLUSTER_DATA_PATH --ldata=$CLUSTER_DATA_PATH --no-defaults > /dev/null 2>&1
+
+	$DB_INSTALL --datadir=$CLUSTER_DATA_PATH > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "Error:make database."
 		exit 1
 	fi
 
-	# get my.cnf
+	# set my.cnf
 	GLOBAL_VERSION=`echo $VERSION_STRING|cut -c 1-2`
-	CONF_URL=https://raw.githubusercontent.com/kazeburo/mysetup/master/mysql/my$GLOBAL_VERSION.cnf
-	if [ $VERSION_STRING -gt 5700 ]; then
-		echo "bbbb"
-		CONF_URL=https://raw.githubusercontent.com/kazeburo/mysetup/master/mysql/my56.cnf
-		curl $CONF_URL -o $MYSQL_CONF > /dev/null 2>&1
-		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
-		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
-		sed -i -e "s/key_buffer/key_buffer_size/g" $MYSQL_CONF
-		sed -i -e "s/thread_cache/thread_cache_size/g" $MYSQL_CONF
-	elif [ $VERSION_STRING -gt 5100 ]; then #5100-5600
-		curl $CONF_URL -o $MYSQL_CONF > /dev/null 2>&1
-		sed -i -e "s%/var/lib/mysql%$CLUSTER_DATA_PATH%g" $MYSQL_CONF
-		sed -i -e "s/<SERVER_ID>/1/g" $MYSQL_CONF
-	else #under 4000
-		curl $CONF_URL -o $MYSQL_CONF > /dev/null 2>&1
+	if [ $VERSION_STRING -lt 5600 ]; then
+		# 5.5.x
+		cp support-files/my-medium.cnf $MYSQL_CONF
+	elif [ $VERSION_STRING -lt 5700 ]; then #5100-5600
+		# 5.6.x
+		cp support-files/my-default.cnf $MYSQL_CONF
+	else
+		# 5.7.x
+		cp support-files/my-default.cnf $MYSQL_CONF
 	fi
 
 	# set port
@@ -80,8 +80,8 @@ cluster_create()
 	#root's default password is 'password'
 	#"$MYSQLVC_BIN_ROOT/mysqladmin" -u root password "password"
 
-	echo "MySQL base directory is $MYSQL_CURRENT_ROOT."
-	echo "my.cnf is $MYSQL_CONF."
+	echo "MySQL base directory is $MYSQL_CURRENT_ROOT ."
+	echo "my.cnf is $MYSQL_CONF ."
 }
 
 cluster_dump()
