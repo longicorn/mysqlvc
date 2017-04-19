@@ -23,7 +23,8 @@ file)
 	install_file $*
 	;;
 list)
-	$MYSQL_BUILD_COMMAND --definitions
+	# support 5.5 over
+	$MYSQL_BUILD_COMMAND --definitions | grep -v '3.' | grep -v '4.' | grep -v '5.0' | grep -v '5.1'
 	;;
 *)
 	$MYSQL_BUILD_COMMAND $OPTION "$MYSQL_ROOT/$OPTION"
