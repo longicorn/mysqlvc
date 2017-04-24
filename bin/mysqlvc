@@ -16,6 +16,14 @@ if [ -e $MYSQL_VERSION_PATH ]; then
 	export MYSQL_CURRENT_ROOT="$MYSQLVC_ROOT/versions/$MYSQL_VERSION"
 fi
 
+if [ "$(uname)" = 'Darwin' ]; then
+	export OS="Mac"
+elif [ "$(expr substr $(uname -s) 1 5)" = 'Linux' ]; then
+	export OS="Linux"
+else
+	exit 1
+fi
+
 print_help()
 {
 	echo "Usage: mysqlvc action option..."

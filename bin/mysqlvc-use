@@ -19,6 +19,18 @@ env_init()
 	LIBEXEC_ROOT=$MYSQLVC_ROOT/libexec
 	LIB_ROOT=$MYSQLVC_ROOT/lib
 
+	# for Mac
+	if [ $OS = 'Mac' ]; then
+		for file in `ls $LIB_ROOT/libmysql* 2>/dev/null`; do
+			lib_file=/usr/local/lib/`basename $file`
+			ls -l $lib_file|awk '{print $11}'|grep "mysqlvc" > /dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				continue
+			fi
+			rm -f $lib_file
+		done
+	fi
+
 	rm -f $LIBEXEC_ROOT
 	rm -f $LIB_ROOT
 
@@ -27,6 +39,14 @@ env_init()
 		ln -s $MYSQL_CURRENT_ROOT/lib $LIB_ROOT
 	elif [ $VERSION_STRING -gt 5100 ]; then
 		ln -s $MYSQL_CURRENT_ROOT/lib/mysql $LIB_ROOT
+	fi
+
+	# for Mac
+	if [ $OS = 'Mac' ]; then
+		for file in `ls $LIB_ROOT/libmysql* 2>/dev/null`; do
+			lib_file=/usr/local/lib/`basename $file`
+			ln -s $file $lib_file
+		done
 	fi
 }
 
