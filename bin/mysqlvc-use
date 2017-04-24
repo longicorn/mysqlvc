@@ -23,7 +23,7 @@ env_init()
 	if [ $OS = 'Mac' ]; then
 		for file in `ls $LIB_ROOT/libmysql* 2>/dev/null`; do
 			lib_file=/usr/local/lib/`basename $file`
-			ls -l $lib_file|awk '{print $11}'|grep "mysqlvc" > /dev/null 2>&1
+			ls -l $lib_file|awk '{print $11}' 2>/dev/null | grep "mysqlvc" > /dev/null 2>&1
 			if [ $? -ne 0 ]; then
 				continue
 			fi
