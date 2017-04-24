@@ -15,10 +15,6 @@ Installation
 
     # set library path on Linux
     $ export LD_LIBRARY_PATH=$HOME/.mysqlvc/lib:$LD_LIBRARY_PATH
-    # set library path on Mac
-    $ export DYLD_LIBRARY_PATH=$HOME/.mysqlvc/lib:$DYLD_LIBRARY_PATH
-    or
-    $ export DYLD_FALLBACK_LIBRARY_PATH=$HOME/.mysqlvc/lib:$DYLD_FALLBACK_LIBRARY_PATH
 
     $ mysqlvc init
 
