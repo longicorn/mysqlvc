@@ -6,7 +6,10 @@ if [ $# -gt 0 ]; then
 	CLUSTER=$1
 	shift
 	CLUSTER_CURRENT_ROOT="$CLUSTER_VERSION_ROOT/$CLUSTER"
-	VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"|head -c 4`
+	GLOBAL_VERSION_STRING=`echo $MYSQL_VERSION|awk -F'.' '{print $1}'`
+	MINOR_VERSION_STRING=`echo $MYSQL_VERSION|awk -F'.' '{print $2}'`
+	PATCH_VERSION_STRING=`echo $MYSQL_VERSION|awk -F'.' '{print "0"$3}'|sed -e "s/[^0-9]//g"|tail -c 3`
+	VERSION_STRING=`echo $GLOBAL_VERSION_STRING$MINOR_VERSION_STRING$PATCH_VERSION_STRING`
 	PORT_VERSION_STRING=`echo $MYSQL_VERSION|sed -e "s/[^0-9]//g"|head -c 5`
 fi
 
@@ -58,9 +61,11 @@ cluster_create()
 	elif [ $VERSION_STRING -lt 5700 ]; then #5100-5600
 		# 5.6.x
 		cp support-files/my-default.cnf $MYSQL_CONF
-	else
+	elif [ $VERSION_STRING -lt 5800 ]; then #5100-5600
 		# 5.7.x
 		cp support-files/my-default.cnf $MYSQL_CONF
+	else
+		cp mysql-test/suite/rpl/my.cnf $MYSQL_CONF
 	fi
 
 	# set port
